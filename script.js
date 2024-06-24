@@ -1,36 +1,40 @@
-function mincost(arr) {
-    if (arr.length <= 1) {
-        return 0; // If there's one or no rope, no cost is needed.
-    }
-
-    // Sort the array initially
+function minCost(arr) {
+    // Sort the array
     arr.sort((a, b) => a - b);
-
+    
     let totalCost = 0;
-
+    
     while (arr.length > 1) {
-        // Take the two smallest ropes
-        let firstMin = arr.shift();
-        let secondMin = arr.shift();
+        // Get the two smallest elements and add them
+        let temp = arr[0] + arr[1];
+        totalCost += temp;
         
-        // Cost to connect these two ropes
-        let cost = firstMin + secondMin;
-        totalCost += cost;
+        // Remove the two smallest elements from the array
+        arr = arr.slice(2);
+        
+        // Find the correct index to insert 'temp' to keep the array sorted
+        let index = binarySearch(arr, temp);
+        
+        // Insert 'temp' at the found index
+        arr.splice(index, 0, temp);
+    }
+    
+    return totalCost;
+}
 
-        // Insert the new rope back into the sorted position in the array
-        // This can be optimized but for simplicity we'll use a loop
-        let inserted = false;
-        for (let i = 0; i < arr.length; i++) {
-            if (arr[i] > cost) {
-                arr.splice(i, 0, cost);
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) {
-            arr.push(cost);
+// Binary search function to find the correct index
+function binarySearch(arr, value) {
+    let low = 0;
+    let high = arr.length;
+    
+    while (low < high) {
+        let mid = Math.floor((low + high) / 2);
+        if (arr[mid] < value) {
+            low = mid + 1;
+        } else {
+            high = mid;
         }
     }
-
-    return totalCost;
+    
+    return low;
 }
