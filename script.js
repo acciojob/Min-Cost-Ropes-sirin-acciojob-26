@@ -1,41 +1,42 @@
 function minCost(arr) {
-    // Sort the array
-    arr.sort((a, b) => a - b);
+    // Edge case: If there's only one rope, no cost is needed
+    if (arr.length <= 1) {
+        return 0;
+    }
+    
+    // Initialize a min-heap (using array operations)
+    const minHeap = [];
+    
+    // Insert all elements of arr into minHeap
+    for (let rope of arr) {
+        minHeap.push(rope);
+    }
+    
+    // Build the min-heap using sort to ensure min-heap property
+    minHeap.sort((a, b) => a - b);
     
     let totalCost = 0;
-
-    // Function to perform binary search to find the correct index for insertion
-    function binarySearch(arr, value) {
-        let low = 0;
-        let high = arr.length - 1;
-
-        while (low <= high) {
-            let mid = Math.floor((low + high) / 2);
-            if (arr[mid] === value) {
-                return mid;
-            } else if (arr[mid] < value) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        }
-        return low;
-    }
-
-    while (arr.length > 1) {
-        // Get the two smallest elements and add them
-        let temp = arr[0] + arr[1];
-        totalCost += temp;
+    
+    // Merge ropes until only one rope remains in the heap
+    while (minHeap.length > 1) {
+        // Extract the two smallest ropes
+        let first = minHeap.shift();
+        let second = minHeap.shift();
         
-        // Remove the two smallest elements from the array
-        arr = arr.slice(2);
+        // Calculate the cost to merge them
+        let cost = first + second;
+        totalCost += cost;
         
-        // Find the correct index to insert 'temp'
-        let index = binarySearch(arr, temp);
+        // Insert the combined rope length back into the min-heap
+        minHeap.push(cost);
         
-        // Insert 'temp' at the found index
-        arr.splice(index, 0, temp);
+        // Re-sort the min-heap to maintain the min-heap property
+        minHeap.sort((a, b) => a - b);
     }
     
     return totalCost;
 }
+
+// Example usage:
+console.log(minCost([4, 3, 2, 6]));  // Output: 29
+console.log(minCost([1, 2, 3, 4, 5]));  // Output: 33
